@@ -1,0 +1,17 @@
+version: 0.0                      # AppSpec version for EC2/On-Premise
+os: linux                         # We're deploying to a Linux-based EC2 instance
+
+files:
+  - source: /                     # Copy everything from repo root
+    destination: /var/www/html    # Paste it into Apache's web root
+
+hooks:
+  AfterInstall:                   # Run after files are copied to EC2
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+
+  ApplicationStart:              # Run after install, to restart Apache
+    - location: scripts/restart_httpd.sh
+      timeout: 300
+      runas: root
