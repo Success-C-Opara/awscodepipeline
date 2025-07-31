@@ -1,17 +1,22 @@
-version: 0.0                      # AppSpec version for EC2/On-Premise
-os: linux                         # We're deploying to a Linux-based EC2 instance
+version: 0.2
 
-files:
-  - source: /                     # Copy everything from repo root
-    destination: /var/www/html    # Paste it into Apache's web root
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Nothing to install here"
 
-hooks:
-  AfterInstall:                   # Run after files are copied to EC2
-    - location: scripts/install_dependencies.sh
-      timeout: 300
-      runas: root
+  pre_build:
+    commands:
+      - echo "Preparing to deploy"
 
-  ApplicationStart:              # Run after install, to restart Apache
-    - location: scripts/restart_httpd.sh
-      timeout: 300
-      runas: root
+  build:
+    commands:
+      - echo "Deploying to EC2"
+      - chmod +x scripts/deploy.sh
+      - ./scripts/deploy.sh
+
+artifacts:
+  files:
+    - '**/*'
